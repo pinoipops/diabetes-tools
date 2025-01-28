@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T2DM Management Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lexend', Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensure the app fits within the viewport */
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 420px;
+            text-align: center;
+            margin: 20px; /* Add margin for better spacing */
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+            text-align: left;
+            color: #444;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+
+        .checkbox-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group label {
+            font-weight: normal;
+            display: block;
+            margin: 8px 0;
+            color: #555;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #333;
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .tips {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .lifestyle-advice, .dual-therapy-advice {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #333;
+            text-align: left;
+            display: none; /* Hidden by default */
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .save-button {
+            background-color: #28a745;
+            margin-top: 20px;
+        }
+
+        .save-button:hover {
+            background-color: #218838;
+        }
+
+        .toggle-button {
+            background-color: #6c757d;
+            margin-top: 10px;
+        }
+
+        .toggle-button:hover {
+            background-color: #5a6268;
+        }
+
+        .reset-button {
+            background-color: #dc3545;
+            margin-top: 10px;
+        }
+
+        .reset-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>T2DM Management Tools</h1>
+        <div class="subtitle">by Esphynol JAMALUDDIN</div>
+        <form id="t2dmForm">
+            <label for="age">Age:</label>
+            <input type="number" id="age" placeholder="Enter age" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" required>
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+
+            <label for="hba1c">HbA1c (%):</label>
+            <input type="number" id="hba1c" placeholder="Enter HbA1c" step="0.1" required>
+
+            <label for="duration">Duration of Diabetes (years):</label>
+            <input type="number" id="duration" placeholder="Enter duration" required>
+
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" placeholder="Enter weight" required>
+
+            <label for="height">Height (cm):</label>
+            <input type="number" id="height" placeholder="Enter height" required>
+
+            <label>Comorbidities:</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="comorbidities" value="Hypertension"> Hypertension</label>
+                <label><input type="checkbox" name="comorbidities" value="CKD"> Chronic Kidney Disease (CKD)</label>
+                <label><input type="checkbox" name="comorbidities" value="CVD"> Cardiovascular Disease (CVD)</label>
+                <label><input type="checkbox" name="comorbidities" value="Obesity"> Obesity</label>
+            </div>
+
+            <button type="button" id="calculateBtn">Get Recommendation</button>
+            <button type="button" class="reset-button" id="resetBtn">Reset</button>
+        </form>
+        <div id="result"></div>
+        <button class="toggle-button" id="toggleLifestyleBtn" style="display: none;">Show Lifestyle Modifications</button>
+        <div class="lifestyle-advice" id="lifestyleAdvice"></div>
+        <button class="toggle-button" id="toggleDualTherapyBtn" style="display: none;">Show Dual Therapy Suggestions</button>
+        <div class="dual-therapy-advice" id="dualTherapyAdvice"></div>
+        <button class="save-button" id="saveBtn" style="display: none;">Save/Print Recommendation</button>
+        <div class="tips">* Recommendations are based on Malaysia CPG for T2DM Management.</div>
+    </div>
+
+    <script>
+        document.getElementById("calculateBtn").addEventListener("click", function () {
+            const age = parseInt(document.getElementById("age").value.trim(), 10);
+            const gender = document.getElementById("gender").value;
+            const hba1c = parseFloat(document.getElementById("hba1c").value.trim());
+            const duration = parseInt(document.getElementById("duration").value.trim(), 10);
+            const weight = parseFloat(document.getElementById("weight").value.trim());
+            const height = parseFloat(document.getElementById("height").value.trim());
+            const comorbidities = Array.from(document.querySelectorAll('input[name="comorbidities"]:checked')).map(checkbox => checkbox.value);
+
+            const resultDiv = document.getElementById("result");
+            const lifestyleAdviceDiv = document.getElementById("lifestyleAdvice");
+            const dualTherapyAdviceDiv = document.getElementById("dualTherapyAdvice");
+            const toggleLifestyleBtn = document.getElementById("toggleLifestyleBtn");
+            const toggleDualTherapyBtn = document.getElementById("toggleDualTherapyBtn");
+            const saveBtn = document.getElementById("saveBtn");
+
+            // Validate inputs
+            if (isNaN(age) || !gender || isNaN(hba1c) || isNaN(duration) || isNaN(weight) || isNaN(height) || comorbidities.length === 0) {
+                resultDiv.innerHTML = "Please fill in all fields.";
+                lifestyleAdviceDiv.innerHTML = "";
+                dualTherapyAdviceDiv.innerHTML = "";
+                toggleLifestyleBtn.style.display = "none";
+                toggleDualTherapyBtn.style.display = "none";
+                saveBtn.style.display = "none";
+                return;
+            }
+
+            // Calculate BMI
+            const bmi = (weight / ((height / 100) * (height / 100))).toFixed(1);
+
+            // Determine treatment recommendations
+            let recommendation = "";
+            let dosage = "";
+            let timeframe = "";
+            let lifestyleAdvice = "";
+            let dualTherapyAdvice = "";
+
+            // First-line therapy
+            recommendation = "First-line: Metformin + Lifestyle Modifications.";
+            dosage = "Metformin 500 mg once daily, titrate to 1000 mg twice daily as tolerated.";
+            timeframe = "Reassess HbA1c after 3 months. If target not achieved, consider dual therapy.";
+
+            // Lifestyle Advice
+            lifestyleAdvice = `
+                <strong>Lifestyle Modifications:</strong>
+                <ul>
+                    <li>Follow a low-carb or DASH diet.</li>
+                    <li>Aim for at least 150 minutes of moderate exercise per week.</li>
+                    <li>Lose 5-10% of body weight if overweight or obese.</li>
+                    <li>Monitor blood glucose levels regularly.</li>
+                </ul>
+            `;
+
+            // Dual Therapy Suggestions
+            if (hba1c > 7.5 || comorbidities.includes("CVD") || comorbidities.includes("CKD")) {
+                dualTherapyAdvice = `
+                    <strong>Dual Therapy Suggestions:</strong><br>
+                    Consider adding an SGLT2 inhibitor (e.g., Empagliflozin 10 mg once daily) or GLP-1 RA (e.g., Liraglutide 0.6 mg once daily).
+                `;
+            }
+
+            // Display Results
+            resultDiv.innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <strong>Recommended Treatment:</strong><br>
+                    ${recommendation}
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Dosage:</strong><br>
+                    ${dosage}
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Timeframe to Escalate:</strong><br>
+                    ${timeframe}
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong>BMI:</strong><br>
+                    ${bmi} kg/m²
+                </div>
+            `;
+            lifestyleAdviceDiv.innerHTML = lifestyleAdvice;
+            dualTherapyAdviceDiv.innerHTML = dualTherapyAdvice;
+            toggleLifestyleBtn.style.display = "block";
+            toggleDualTherapyBtn.style.display = "block";
+            saveBtn.style.display = "block";
+        });
+
+        // Toggle Lifestyle Advice
+        document.getElementById("toggleLifestyleBtn").addEventListener("click", function () {
+            const lifestyleAdviceDiv = document.getElementById("lifestyleAdvice");
+            const toggleLifestyleBtn = document.getElementById("toggleLifestyleBtn");
+
+            if (lifestyleAdviceDiv.style.display === "none") {
+                lifestyleAdviceDiv.style.display = "block";
+                toggleLifestyleBtn.textContent = "Hide Lifestyle Modifications";
+            } else {
+                lifestyleAdviceDiv.style.display = "none";
+                toggleLifestyleBtn.textContent = "Show Lifestyle Modifications";
+            }
+        });
+
+        // Toggle Dual Therapy Advice
+        document.getElementById("toggleDualTherapyBtn").addEventListener("click", function () {
+            const dualTherapyAdviceDiv = document.getElementById("dualTherapyAdvice");
+            const toggleDualTherapyBtn = document.getElementById("toggleDualTherapyBtn");
+
+            if (dualTherapyAdviceDiv.style.display === "none") {
+                dualTherapyAdviceDiv.style.display = "block";
+                toggleDualTherapyBtn.textContent = "Hide Dual Therapy Suggestions";
+            } else {
+                dualTherapyAdviceDiv.style.display = "none";
+                toggleDualTherapyBtn.textContent = "Show Dual Therapy Suggestions";
+            }
+        });
+
+        // Save/Print Functionality
+        document.getElementById("saveBtn").addEventListener("click", function () {
+            const resultDiv = document.getElementById("result").innerText;
+            const lifestyleAdviceDiv = document.getElementById("lifestyleAdvice").innerText;
+            const dualTherapyAdviceDiv = document.getElementById("dualTherapyAdvice").innerText;
+
+            const content = `
+                T2DM Management Recommendation\n\n
+                ${resultDiv}\n\n
+                ${lifestyleAdviceDiv}\n\n
+                ${dualTherapyAdviceDiv}
+            `;
+
+            // Print or Save as PDF
+            const printWindow = window.open("", "", "height=600,width=800");
+            printWindow.document.write(`<pre>${content}</pre>`);
+            printWindow.document.close();
+            printWindow.print();
+        });
+
+        // Reset Functionality
+        document.getElementById("resetBtn").addEventListener("click", function () {
+            document.getElementById("t2dmForm").reset();
+            document.getElementById("result").innerHTML = "";
+            document.getElementById("lifestyleAdvice").innerHTML = "";
+            document.getElementById("dualTherapyAdvice").innerHTML = "";
+            document.getElementById("toggleLifestyleBtn").style.display = "none";
+            document.getElementById("toggleDualTherapyBtn").style.display = "none";
+            document.getElementById("saveBtn").style.display = "none";
+        });
+    </script>
+</body>
+</html>

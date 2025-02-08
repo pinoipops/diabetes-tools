@@ -1,7 +1,9 @@
-# T2DM Management Tools
+# Diabetes Mellitus Type 2 (T2DM) Management Tools
 
 ## Overview
 The **T2DM Management Tools** is a web-based application designed to assist healthcare professionals in managing Type 2 Diabetes Mellitus (T2DM). It provides personalized treatment recommendations based on patient demographics, clinical data, and comorbidities. The tool adheres to the **Malaysia Clinical Practice Guidelines (CPG) for T2DM Management**.
+
+![Screenshot](screenshot.png) <!-- Add a screenshot later -->
 
 ## Features
 - **Personalized Recommendations**: Provides first-line drug recommendations, dosages, and timeframes for therapy escalation based on patient age, gender, HbA1c, BMI, and comorbidities.
